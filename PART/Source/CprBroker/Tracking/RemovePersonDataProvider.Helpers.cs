@@ -18,10 +18,25 @@ namespace CprBroker.Slet
         public async Task<bool> RemoveSubscription(BrokerContext brokerContext, IPutSubscriptionDataProvider prov, PersonIdentifier personIdentifier)
         {
             BrokerContext.Current = brokerContext;
-            if (prov.IsSharingSubscriptions) // Shared subsciptions should not be deleted because they can cause other systems to stop getting updates
+            bool result;
+            if (prov.IsSharingSubscriptions)
+            {
+                // Shared subsciptions should not be deleted because they can cause other systems to stop getting updates
                 return true;
+            }
             else
-                return prov.RemoveSubscription(personIdentifier);
+            {
+                result = prov.RemoveSubscription(personIdentifier);
+                if (!result)
+                {
+                    Engine.Local.Admin.LogError(string.Format(
+                        "RemovePersonDataProvider.RemoveSubscription() failed removing subscription for <{0}> at data provider <{1}>",
+                        personIdentifier.UUID,
+                        prov.GetType())
+                        );
+                }
+                return result;
+            }
         }
 
         public async Task<bool> DeletePersonFromAllExtracts(BrokerContext brokerContext, PersonIdentifier personIdentifier)
