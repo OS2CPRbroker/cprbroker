@@ -98,14 +98,23 @@ namespace CprBroker.Providers.CPRDirect
                     string errorCode = response.Substring(Constants.ResponseLengths.ErrorCodeIndex, Constants.ResponseLengths.ErrorCodeLength);
                     Admin.LogFormattedSuccess("CPR client: PNR <{0}>, status code <{1}>", pnr.ToPnrDecimalString(), errorCode);
 
-                    if (Constants.ErrorCodes.ContainsKey(errorCode))
+                    // "00" is code for "NO ERROR".
+                    // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
+                    if (errorCode != "00")
                     {
-                        error = Constants.ErrorCodes[errorCode];
+                        if (Constants.ErrorCodes.ContainsKey(errorCode))
+                        {
+                            error = Constants.ErrorCodes[errorCode];
+                        }
+                        else
+                        {
+                            error = string.Format("An unkown CPR Direct error has occured: {0}", error);
+                        }
                         // We log the call and set the success parameter to false
                         callContext.Fail();
                         return false;
                     }
-                    else
+                    else if(errorCode == "00") 
                     {
                         // We log the call and set the success parameter to true
                         callContext.Succeed();
