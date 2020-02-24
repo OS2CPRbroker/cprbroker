@@ -100,7 +100,13 @@ namespace CprBroker.Providers.CPRDirect
 
                     // "00" is code for "NO ERROR".
                     // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
-                    if (errorCode != "00")
+                    if (errorCode == "00")
+                    {
+                        // We log the call and set the success parameter to true
+                        callContext.Succeed();
+                        return true;                
+                    }
+                    else 
                     {
                         if (Constants.ErrorCodes.ContainsKey(errorCode))
                         {
@@ -113,12 +119,6 @@ namespace CprBroker.Providers.CPRDirect
                         // We log the call and set the success parameter to false
                         callContext.Fail();
                         return false;
-                    }
-                    else if(errorCode == "00") 
-                    {
-                        // We log the call and set the success parameter to true
-                        callContext.Succeed();
-                        return true;
                     }
                 }
                 catch (Exception ex)
