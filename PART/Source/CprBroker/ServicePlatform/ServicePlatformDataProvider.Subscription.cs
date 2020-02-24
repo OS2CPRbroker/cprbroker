@@ -161,7 +161,14 @@ namespace CprBroker.Providers.ServicePlatform
                                 //success
                                 break;
                             case ReturnCodePNR.NON_EXISTING_PNR:
-                                throw new Exception(String.Format("Error removing subscription for UUID <{0}>, service platform returns NON_EXISTING_PNR.", personIdentifier.UUID));
+                                /**The person we need to remove from subscription isn't in subscription. This is not necessarily a bad thing, because 'we win' neither way.
+                                 * Throwing an exception here, and hereby returning 'false' seems to interrupt removal of a given person during 'Cleanup'.
+                                 * E.g. the queue item is not released until you put a subscription at Serviceplatformen for the given PNR.
+                                 */
+                                Admin.LogFormattedError(
+                                    String.Format("Serviceplatformen returned <{0}> removing subscription for UUID <{0}>.",
+                                    personIdentifier.UUID));
+                                break;
                             default:
                                 throw new Exception(String.Format("Error removing subscription for UUID <{0}>, service platform returns unexpected code <{1}>.", personIdentifier.UUID, returnCode));
                         }
