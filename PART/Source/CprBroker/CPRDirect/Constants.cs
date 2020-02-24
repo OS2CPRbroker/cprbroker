@@ -54,6 +54,7 @@ namespace CprBroker.Providers.CPRDirect
         static Constants()
         {
             _ErrorCodes = new Dictionary<string, string>();
+            // _ErrorCodes["00"] = "No Error"; --> DO NOT UNCOMMENT! (Only to highlight that CPR Direct returns this value on success).
             _ErrorCodes["01"] = "Incorrect user ID / remote server)";
             _ErrorCodes["02"] = "Remote server expired, new remote server required";
             _ErrorCodes["03"] = "New remote server does not meet the format (8 characters, at least 2 numbers and 2 letters and not previously used)";
