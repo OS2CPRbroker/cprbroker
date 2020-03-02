@@ -96,7 +96,6 @@ namespace CprBroker.Providers.CPRDirect
                     response = Constants.TcpClientEncoding.GetString(data, 0, bytes);
 
                     string errorCode = response.Substring(Constants.ResponseLengths.ErrorCodeIndex, Constants.ResponseLengths.ErrorCodeLength);
-                    Admin.LogFormattedSuccess("CPR client: PNR <{0}>, status code <{1}>", pnr.ToPnrDecimalString(), errorCode);
 
                     // "00" is code for "NO ERROR".
                     // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
@@ -104,6 +103,7 @@ namespace CprBroker.Providers.CPRDirect
                     {
                         // We log the call and set the success parameter to true
                         callContext.Succeed();
+                        Admin.LogFormattedSuccess("CPR Direct Proxy Client: PNR <{0}>, status code <{1}>", pnr.ToPnrDecimalString(), errorCode);
                         return true;                
                     }
                     else 
@@ -111,10 +111,12 @@ namespace CprBroker.Providers.CPRDirect
                         if (Constants.ErrorCodes.ContainsKey(errorCode))
                         {
                             error = Constants.ErrorCodes[errorCode];
+                            Admin.LogFormattedSuccess("CPR Direct Proxy Client: PNR <{0}>, error code <{1}>", pnr.ToPnrDecimalString(), errorCode);
                         }
                         else
                         {
                             error = string.Format("An unkown CPR Direct error has occured: {0}", error);
+                            Admin.LogFormattedSuccess("CPR Direct Proxy Client: PNR <{0}>, error code <{1}>", pnr.ToPnrDecimalString(), errorCode);
                         }
                         // We log the call and set the success parameter to false
                         callContext.Fail();
