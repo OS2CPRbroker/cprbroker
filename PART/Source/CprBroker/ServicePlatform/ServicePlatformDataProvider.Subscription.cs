@@ -62,6 +62,8 @@ namespace CprBroker.Providers.ServicePlatform
 
         public bool PutSubscription(PersonIdentifier personIdentifier)
         {
+            // Force Sleep to avoid d.o.s. when doing batch operations.
+            System.Threading.Thread.Sleep(500);
 
             // This is a Blacklist feature, where we check if the person is "blacklisted" and should not be subscriped to, when called through CPR Broker
             using (var conn = new SqlConnection(ConfigManager.Current.Settings.CprBrokerConnectionString))
@@ -141,6 +143,9 @@ namespace CprBroker.Providers.ServicePlatform
         {
             var service = CreateService<CprSubscriptionService.CprSubscriptionWebServicePortType, CprSubscriptionService.CprSubscriptionWebServicePortTypeClient>(ServiceInfo.CPRSubscription);
 
+            // Force Sleep to avoid d.o.s. when doing batch operations.
+            System.Threading.Thread.Sleep(500);
+
             using (var callContext = this.BeginCall("RemovePNRSubscription", personIdentifier.CprNumber))
             {
                 try
@@ -161,23 +166,17 @@ namespace CprBroker.Providers.ServicePlatform
                                 //success
                                 break;
                             case ReturnCodePNR.NON_EXISTING_PNR:
-                                /**The person we need to remove from subscription isn't in subscription. This is not necessarily a bad thing, because 'we win' neither way.
-                                 * Throwing an exception here, and hereby returning 'false' seems to interrupt removal of a given person during 'Cleanup'.
-                                 * E.g. the queue item is not released until you put a subscription at Serviceplatformen for the given PNR.
-                                 */
-                                Admin.LogFormattedError(
-                                    String.Format("Serviceplatformen returned <{0}> removing subscription for UUID <{0}>.",
-                                    personIdentifier.UUID));
+                                // In this context neither success nor failure.
                                 break;
                             default:
-                                throw new Exception(String.Format("Error removing subscription for UUID <{0}>, service platform returns unexpected code <{1}>.", personIdentifier.UUID, returnCode));
+                                throw new Exception(String.Format("Error removing subscription for UUID <{0}>, serviceplatformen returns unexpected code <{1}>.", personIdentifier.UUID, returnCode));
                         }
                         callContext.Succeed();
                         return true;
                     }
                     else
                     {
-                        throw new Exception(String.Format("Null value returned by service api call RemovePNRSubscription, when trying to place subscription for UUID: <{0}>", personIdentifier.UUID));
+                        throw new Exception(String.Format("Null value returned by service api call to RemovePNRSubscription, when trying to remove subscription for UUID: <{0}>", personIdentifier.UUID));
                     }
                 }
                 catch (Exception ex)
@@ -243,6 +242,8 @@ namespace CprBroker.Providers.ServicePlatform
 
         public bool PutSubscription(string field, string value, out ReturnCodePNR retCode)
         {
+            // Force Sleep to avoid d.o.s when doing batch operations.
+            System.Threading.Thread.Sleep(500);
             if (SubscriptionFields.Contains(field))
             {
                 var service = CreateService<CprSubscriptionService.CprSubscriptionWebServicePortType, CprSubscriptionService.CprSubscriptionWebServicePortTypeClient>(ServiceInfo.CPRSubscription);
@@ -302,6 +303,9 @@ namespace CprBroker.Providers.ServicePlatform
 
         public bool RemoveSubscription(string field, string value)
         {
+            // Force Sleep to avoid d.o.s when doing batch operations.
+            System.Threading.Thread.Sleep(500);
+
             if (SubscriptionFields.Contains(field))
             {
                 var service = CreateService<CprSubscriptionService.CprSubscriptionWebServicePortType, CprSubscriptionService.CprSubscriptionWebServicePortTypeClient>(ServiceInfo.CPRSubscription);
