@@ -30,9 +30,9 @@ namespace CprBroker.Slet
                 if (!result)
                 {
                     Engine.Local.Admin.LogError(string.Format(
-                        "RemovePersonDataProvider.RemoveSubscription() failed removing subscription for <{0}> at data provider <{1}>",
+                        "RemovePersonDataProvider.RemoveSubscription() failed removing subscription for <{0}> at <{1}>",
                         personIdentifier.UUID,
-                        prov.GetType())
+                        prov.GetType().ToString())
                         );
                 }
                 return result;
