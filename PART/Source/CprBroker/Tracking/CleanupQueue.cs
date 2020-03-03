@@ -105,18 +105,18 @@ namespace CprBroker.PartInterface.Tracking
                     }
 
                 case PersonRemovalDecision.RemoveFromDprEmulation: // Only remove from DPR emulation                    
-                    Admin.LogFormattedSuccess("<{0}>:Attempting to remove semi-unused person <{1}> from DPR emulation", this.GetType().Name, personIdentifier.UUID);
+                    Admin.LogFormattedSuccess("<{0}>:Attempting to remove semi-unused person <{1}> from DPR Emulation", this.GetType().Name, personIdentifier.UUID);
                     var task2 = new RemovePersonDataProvider().DeletePersonFromAllDBR(brokerContext, personIdentifier);
                     task2.Wait();
                     var dbrRemoved = task2.Result;
                     if (dbrRemoved)
                     {
-                        Admin.LogFormattedSuccess("<{0}>: Succesfully removed unused person <{1}>", this.GetType().Name, personIdentifier.UUID);
+                        Admin.LogFormattedSuccess("<{0}>: Succesfully removed unused person <{1}> from DPR Emulation", this.GetType().Name, personIdentifier.UUID);
                         return queueItem;
                     }         
                     else
                     {
-                        Admin.LogFormattedError("<{0}>: Failed to remove semi-unused person <{1}> from DPR emulation", this.GetType().Name, personIdentifier.UUID);
+                        Admin.LogFormattedError("<{0}>: Failed to remove semi-unused person <{1}> from DPR Emulation", this.GetType().Name, personIdentifier.UUID);
                         return null;
                     }
 
