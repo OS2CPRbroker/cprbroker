@@ -111,9 +111,9 @@ namespace CprBroker.Providers.CPRDirect
                     // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
                     if (errorCode == "00")
                     {
+                        Admin.LogFormattedSuccess("CPR Direct Proxy Client: Server status code <{1}>. CPR Broker UUID <{0}>.", cprBrokerUUID, errorCode);
                         // We log the call and set the success parameter to true
                         callContext.Succeed();
-                        Admin.LogFormattedSuccess("CPR Direct Proxy Client: CPR Broker UUID <{0}>, status code <{1}>", cprBrokerUUID, errorCode);
                         return true;                
                     }
                     else 
@@ -121,12 +121,12 @@ namespace CprBroker.Providers.CPRDirect
                         if (Constants.ErrorCodes.ContainsKey(errorCode))
                         {
                             error = Constants.ErrorCodes[errorCode];
-                            Admin.LogFormattedSuccess("CPR Direct Proxy Client: CPR Broker UUID <{0}>, error code <{1}>", cprBrokerUUID, errorCode);
+                            Admin.LogFormattedError("CPR Direct Proxy Client: Server error code <{1}>. CPR Broker UUID <{0}>.", cprBrokerUUID, errorCode);
                         }
                         else
                         {
                             error = string.Format("An unkown CPR Direct error has occured: {0}", error);
-                            Admin.LogFormattedSuccess("CPR Direct Proxy Client: CPR Broker UUID <{0}>, error code <{1}>", cprBrokerUUID, errorCode);
+                            Admin.LogFormattedError("CPR Direct Proxy Client: Server reports unkown error --> <{1}>. CPR Broker UUID <{0}>.", cprBrokerUUID, errorCode);
                         }
                         // We log the call and set the success parameter to false
                         callContext.Fail();
