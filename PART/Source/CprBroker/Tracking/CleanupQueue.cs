@@ -95,12 +95,12 @@ namespace CprBroker.PartInterface.Tracking
                     var personRemoved = task1.Result;
                     if (personRemoved)
                     {
-                        Admin.LogFormattedSuccess("<{0}>: Succesfully removed unused person <{1}>", this.GetType().Name, personIdentifier.UUID);
+                        Admin.LogFormattedSuccess("<{0}>: All subtasks succeeded during removal of unused person <{1}>", this.GetType().Name, personIdentifier.UUID);
                         return queueItem;
                     }
                     else
                     {
-                        Admin.LogFormattedError("<{0}>: Failed to remove unused person <{1}>", this.GetType().Name, personIdentifier.UUID);
+                        Admin.LogFormattedError("<{0}>: One or more subtasks failed(even though some might have suceeded) during removal of unused person <{1}>", this.GetType().Name, personIdentifier.UUID);
                         return null;
                     }
 
