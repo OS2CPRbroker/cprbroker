@@ -85,7 +85,7 @@ namespace CprBroker.Providers.CPRDirect
             _ErrorCodes["28"] = "BRUGER-ID does not have access to transaction(CTPERSKOD_PROFIL is not active)";
 
 
-            for (int err = 19; err < 100; err++)
+            for (int err = 29; err < 100; err++)
             {
                 _ErrorCodes[err.ToString()] = "(reserved error number)";
             }
