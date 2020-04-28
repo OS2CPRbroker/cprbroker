@@ -52,6 +52,7 @@ using CprBroker.Schemas.Part;
 using CprBroker.Utilities;
 using System.Net.Sockets;
 using CprBroker.Engine.Local;
+using CprBroker.PartInterface;
 
 namespace CprBroker.Providers.CPRDirect
 {
@@ -77,6 +78,11 @@ namespace CprBroker.Providers.CPRDirect
 
         protected bool Send(string operation, decimal pnr, string message, out string response, out string error)
         {
+            PartManager pm = new PartManager();
+            BrokerContext bc = BrokerContext.Current;
+            GetUuidOutputType UUIDOutput = pm.GetUuid(bc.UserToken.ToString(), bc.ApplicationToken.ToString(), pnr.ToPnrDecimalString());
+            string cprBrokerUUID = UUIDOutput.UUID;
+
             error = null;
             NetworkStream stream = null;
 
@@ -96,20 +102,30 @@ namespace CprBroker.Providers.CPRDirect
                     response = Constants.TcpClientEncoding.GetString(data, 0, bytes);
 
                     string errorCode = response.Substring(Constants.ResponseLengths.ErrorCodeIndex, Constants.ResponseLengths.ErrorCodeLength);
-                    Admin.LogFormattedSuccess("CPR client: PNR <{0}>, status code <{1}>", pnr.ToPnrDecimalString(), errorCode);
 
-                    if (Constants.ErrorCodes.ContainsKey(errorCode))
+                    // "00" is code for "NO ERROR", in other words "SUCCESS".
+                    if (errorCode == "00")
                     {
-                        error = Constants.ErrorCodes[errorCode];
-                        // We log the call and set the success parameter to false
-                        callContext.Fail();
-                        return false;
-                    }
-                    else
-                    {
+                        Admin.LogFormattedSuccess("CPR Direct Proxy Client says: server returned status code <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
                         // We log the call and set the success parameter to true
                         callContext.Succeed();
                         return true;
+                    }
+                    else
+                    {
+                        if (Constants.ErrorCodes.ContainsKey(errorCode))
+                        {
+                            error = Constants.ErrorCodes[errorCode];
+                            Admin.LogFormattedError("CPR Direct Proxy Client says: Server returned error code <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
+                        }
+                        else
+                        {
+                            error = string.Format("An unkown CPR Direct error has occured: {0}", error);
+                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reported unkown error --> <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
+                        }
+                        // We log the call and set the success parameter to false
+                        callContext.Fail();
+                        return false;
                     }
                 }
                 catch (Exception ex)
