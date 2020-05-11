@@ -103,11 +103,16 @@ namespace CprBroker.Providers.CPRDirect
 
                     string errorCode = response.Substring(Constants.ResponseLengths.ErrorCodeIndex, Constants.ResponseLengths.ErrorCodeLength);
 
-                    // "00" is code for "NO ERROR", in other words "SUCCESS".
+                    Constants.ErrorCodes.TryGetValue(errorCode, out string error_descr);
+
+                    // "00" means that the request was succesful.
                     if (errorCode == "00")
-                    {
-                        Admin.LogFormattedSuccess("CPR Direct Proxy Client says: server returned status code <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
-                        // We log the call and set the success parameter to true
+                    {        
+                        Admin.LogFormattedSuccess("CPR Direct Proxy Client returned status code <{0}><{1}>, for person <{0}>.",
+                            errorCode,
+                            error_descr,
+                            cprBrokerUUID
+                            );
                         callContext.Succeed();
                         return true;
                     }
@@ -116,14 +121,20 @@ namespace CprBroker.Providers.CPRDirect
                         if (Constants.ErrorCodes.ContainsKey(errorCode))
                         {
                             error = Constants.ErrorCodes[errorCode];
-                            Admin.LogFormattedError("CPR Direct Proxy Client says: Server returned error code <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
+                            Admin.LogFormattedError("CPR Direct Proxy Client returned status code <{0}><{1}>, for person <{0}>.",
+                                errorCode,
+                                error_descr,
+                                cprBrokerUUID
+                                );
                         }
                         else
                         {
                             error = string.Format("An unkown CPR Direct error has occured: {0}", error);
-                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reported unkown error --> <{1}> for person <{0}>.", cprBrokerUUID, errorCode);
+                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reported unknown error --> <{1}> for person <{0}>.",
+                                cprBrokerUUID,
+                                errorCode
+                                );
                         }
-                        // We log the call and set the success parameter to false
                         callContext.Fail();
                         return false;
                     }

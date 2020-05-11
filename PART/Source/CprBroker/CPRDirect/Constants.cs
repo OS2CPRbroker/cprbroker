@@ -55,7 +55,8 @@ namespace CprBroker.Providers.CPRDirect
         {
             // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
             _ErrorCodes = new Dictionary<string, string>();
-            _ErrorCodes["01"] = "Incorrect user ID / remote server)";
+            _ErrorCodes["00"] = "No error (successful request)";
+            _ErrorCodes["01"] = "Incorrect user ID / remote server";
             _ErrorCodes["02"] = "Remote server expired, new remote server required";
             _ErrorCodes["03"] = "New remote server does not meet the format (8 characters, at least 2 numbers and 2 letters and not previously used)";
             _ErrorCodes["04"] = "No access to CPR";
@@ -84,7 +85,7 @@ namespace CprBroker.Providers.CPRDirect
             _ErrorCodes["27"] = "Error code 27 (reserved error number)";
             _ErrorCodes["28"] = "BRUGER-ID does not have access to transaction(CTPERSKOD_PROFIL is not active)";
 
-            for (int err = 28; err < 100; err++)
+            for (int err = 29; err < 100; err++)
             {
                 _ErrorCodes[err.ToString()] = "(reserved error number)";
             }
