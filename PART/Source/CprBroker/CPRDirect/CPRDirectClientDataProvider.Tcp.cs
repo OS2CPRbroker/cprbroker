@@ -103,7 +103,8 @@ namespace CprBroker.Providers.CPRDirect
 
                     string errorCode = response.Substring(Constants.ResponseLengths.ErrorCodeIndex, Constants.ResponseLengths.ErrorCodeLength);
 
-                    Constants.ErrorCodes.TryGetValue(errorCode, out string error_descr);
+                    string error_descr = "No description";
+                    Constants.ErrorCodes.TryGetValue(errorCode, out error_descr);
 
                     // "00" means that the request was succesful.
                     if (errorCode == "00")
