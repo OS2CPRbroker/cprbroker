@@ -109,7 +109,7 @@ namespace CprBroker.Providers.CPRDirect
                     // "00" means that the request was succesful.
                     if (errorCode == "00")
                     {        
-                        Admin.LogFormattedSuccess("CPR Direct Proxy Client returned status code <{0}><{1}>, for person <{0}>.",
+                        Admin.LogFormattedSuccess("CPR Direct Proxy Client returned status code <{0}><\"{1}\">, for person <{2}>.",
                             errorCode,
                             error_descr,
                             cprBrokerUUID
@@ -122,7 +122,7 @@ namespace CprBroker.Providers.CPRDirect
                         if (Constants.ErrorCodes.ContainsKey(errorCode))
                         {
                             error = Constants.ErrorCodes[errorCode];
-                            Admin.LogFormattedError("CPR Direct Proxy Client returned status code <{0}><{1}>, for person <{0}>.",
+                            Admin.LogFormattedError("CPR Direct Proxy Client returned status code <{0}><\"{1}\">, for person <{2}>.",
                                 errorCode,
                                 error_descr,
                                 cprBrokerUUID
@@ -131,9 +131,9 @@ namespace CprBroker.Providers.CPRDirect
                         else
                         {
                             error = string.Format("An unkown CPR Direct error has occured: {0}", error);
-                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reported unknown error --> <{1}> for person <{0}>.",
+                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reports unknown error for person <{0}>\n --> <{1}> .",
                                 cprBrokerUUID,
-                                errorCode
+                                error
                                 );
                         }
                         callContext.Fail();
