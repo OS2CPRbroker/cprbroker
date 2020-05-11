@@ -130,10 +130,8 @@ namespace CprBroker.Providers.CPRDirect
                         }
                         else
                         {
-                            error = string.Format("An unkown CPR Direct error has occured: {0}", error);
-                            Admin.LogFormattedError("CPR Direct Proxy Client says: server reports unknown error for person <{0}>\n --> <{1}> .",
-                                cprBrokerUUID,
-                                error
+                            Admin.LogFormattedError("CPR Direct server reports unknown error for person <{0}>. Try and check application log of the CPR Direct Proxy Client for more information.",
+                                cprBrokerUUID
                                 );
                         }
                         callContext.Fail();
