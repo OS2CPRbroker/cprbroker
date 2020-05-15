@@ -106,7 +106,7 @@ namespace CprBroker.Providers.CPRDirect
                     string error_descr = "No description";
                     Constants.ErrorCodes.TryGetValue(errorCode, out error_descr);
 
-                    // "00" means that the request was succesful.
+                    // "00" means that the call was succesful.
                     if (errorCode == "00")
                     {        
                         Admin.LogFormattedSuccess("CPR Direct Proxy Client returned status code <{0}><\"{1}\">, for person <{2}>.",

@@ -55,7 +55,7 @@ namespace CprBroker.Providers.CPRDirect
         {
             // Reference: "CPR Direkte Grænsefladebeskrivelse OFF4.pdf"(v7.0), p.11.
             _ErrorCodes = new Dictionary<string, string>();
-            _ErrorCodes["00"] = "No error (successful request)";
+            _ErrorCodes["00"] = "No error / Success";
             _ErrorCodes["01"] = "Incorrect user ID / remote server";
             _ErrorCodes["02"] = "Remote server expired, new remote server required";
             _ErrorCodes["03"] = "New remote server does not meet the format (8 characters, at least 2 numbers and 2 letters and not previously used)";
